@@ -11772,11 +11772,11 @@ D. Server-side data encryption
 Answer: A
 QUESTION 1138
 Question：Which AWS service should a company use to provide its employees with
-access to the AWS Management Console？
-A. AWS Identity and Access Management（IAM）
+access to the AWS Management Console?
+A. AWS Identity and Access Management (IAM)
 B. Amazon Cognito
 C. AWS Resource Access Manager
-D. AWS Key Management Service（AWS KMS）
+D. AWS Key Management Service(AWS KMS)
 Answer: A
 QUESTION 1139
 Question: Which AWS service or feature provides a platform for building cloud-based

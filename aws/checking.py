@@ -14,16 +14,16 @@ def file_reader(file_name) -> list:
     line_count = 0
     with open(file_name, 'r') as file:
         question = dict()
-        q_statement = ""
-        e_statement = ""
+        q_statement = list()
+        e_statement = list()
         for line in file:
             try:
                 line_count += 1
                 line = line.replace("\r", "").replace("\n", "")
                 if "QUESTION" in line:
                     if len(e_statement) > 0:
-                        question["explain"] = e_statement
-                        e_statement = ""
+                        question["explain"] = ' '.join(e_statement)
+                        e_statement = list()
                     if len(question) > 0:
                         output_list.append(question)
                         question = dict()
@@ -38,32 +38,32 @@ def file_reader(file_name) -> list:
                     q_statement = ""
                     is_q = False
                     # get option A
-                    question["A"] = line.replace("A.", "")
+                    question["A"] = line.replace("A.", "").strip()
                     is_a = True
                 elif is_a and "B." in line.upper():
                     is_a = False
-                    question["B"] = line.replace("B.", "")
+                    question["B"] = line.replace("B.", "").strip()
                     is_b = True
                 elif is_b and "C." in line.upper():
                     is_b = False
-                    question["C"] = line.replace("C.", "")
+                    question["C"] = line.replace("C.", "").strip()
                     is_c = True
                 elif is_c and "D." in line.upper():
                     is_c = False
-                    question["D"] = line.replace("D.", "")
+                    question["D"] = line.replace("D.", "").strip()
                     is_d = True
                 elif is_d and "E." in line.upper():
                     is_d = False
-                    question["E"] = line.replace("E.", "")
+                    question["E"] = line.replace("E.", "").strip()
                     is_e = True
                 elif (is_d or is_e) and "Answer:" in line:
                     is_d = False
                     is_e = False
-                    question["ans"] = line.replace("Answer:", "")
+                    question["ans"] = line.replace("Answer:", "").strip()
                     is_ans = True
                 elif is_ans and "Explanation:" in line:
                     is_ans = False
-                    e_statement += line.replace("Explanation:", "")
+                    e_statement += line.replace("Explanation:", "").strip()
                     is_explain = True
                 elif is_explain and "QUESTION" not in line:
                     e_statement += line
@@ -77,7 +77,7 @@ def file_reader(file_name) -> list:
         question["explain"] = e_statement
     if len(question) > 0:
         output_list.append(question)
-    return output_list
+    return output_list`;/
 
 
 if __name__ == "__main__":
