@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Flashcard App with Flip</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      background: #f7f9fb;
+      padding: 2rem;
+      min-height: 100vh;
+      box-sizing: border-box;
+      overflow-x: hidden;
+    }
+
+    h1 {
+      margin-bottom: 1rem;
+    }
+
+    .flip-container {
+      perspective: 1000px;
+      margin-bottom: 1.5rem;
+    }
+
+    .card {
+      width: 320px;
+      height: 180px;
+      position: relative;
+      text-align: center;
+      font-size: 1.2rem;
+      cursor: pointer;
+      border-radius: 10px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+    }
+
+    .card-inner {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+    }
+
+    .card.flipped .card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .card-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      background: white;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-face.back {
+      transform: rotateY(180deg);
+      background-color: #f0f0f0;
+    }
+
+    .score-buttons {
+      margin-top: 2rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    button {
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      cursor: pointer;
+      border: none;
+      border-radius: 6px;
+      background-color: #007bff;
+      color: white;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #result {
+      margin-top: 2rem;
+      font-size: 1.2rem;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .counter {
+      margin-top: 1rem;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Flashcard Study</h1>
+
+  <div class="flip-container" onclick="flipCard()">
+    <div class="card" id="flashcard">
+      <div class="card-inner">
+        <div class="card-face front" id="card-front">Loading...</div>
+        <div class="card-face back" id="card-back">Loading...</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="score-buttons">
+    <button onclick="markCorrect()">✅ Correct</button>
+    <button onclick="markWrong()">❌ Wrong</button>
+    <button onclick="resetCards()">🔄 Reset</button>
+  </div>
+
+  <div class="counter" id="counter"></div>
+  <div id="result"></div>
+
+  <script>
+    const cards = [
+      { front: "What is the capital of France?", back: "Paris" },
+      { front: "What is 2 + 2?", back: "4" },
+      { front: "HTML stands for?", back: "HyperText Markup Language" }
+    ];
+
+    let current = 0;
+    let scores = [];
+    let isFlipped = false;
+
+    const flashcard = document.getElementById("flashcard");
+    const cardFront = document.getElementById("card-front");
+    const cardBack = document.getElementById("card-back");
+    const counter = document.getElementById("counter");
+    const result = document.getElementById("result");
+
+    function updateCard() {
+      isFlipped = false;
+      flashcard.classList.remove("flipped");
+      cardFront.textContent = cards[current].front;
+      cardBack.textContent = cards[current].back;
+      counter.textContent = `Card ${current + 1} of ${cards.length}`;
+      result.innerHTML = "";
+    }
+
+    function flipCard() {
+      if (current >= cards.length) return;
+      isFlipped = !isFlipped;
+      flashcard.classList.toggle("flipped", isFlipped);
+    }
+
+    function markCorrect() {
+      if (current >= cards.length) return;
+      scores[current] = "correct";
+      advanceCard();
+    }
+
+    function markWrong() {
+      if (current >= cards.length) return;
+      scores[current] = "wrong";
+      advanceCard();
+    }
+
+    function advanceCard() {
+      current++;
+      if (current < cards.length) {
+        updateCard();
+      } else {
+        showResults();
+      }
+    }
+
+    function showResults() {
+      let correct = scores.filter(x => x === "correct").length;
+      let wrong = scores.filter(x => x === "wrong").length;
+      cardFront.textContent = "✅ Done!";
+      cardBack.textContent = "Click reset to try again.";
+      flashcard.classList.remove("flipped");
+      counter.textContent = "";
+      result.innerHTML = `
+        ✅ Correct: ${correct} <br>
+        ❌ Wrong: ${wrong} <br>
+        🎯 Score: ${Math.round((correct / cards.length) * 100)}%
+      `;
+    }
+
+    function resetCards() {
+      current = 0;
+      scores = [];
+      updateCard();
+    }
+
+    // Init
+    updateCard();
+  </script>
+
+</body>
+</html>
