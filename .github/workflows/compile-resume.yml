@@ -1,0 +1,42 @@
+name: Compile LaTeX Resume
+
+on:
+  push:
+    branches:
+      - main  # Change this to your default branch name if it is not main
+    paths:
+      - 'resume.tex'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Compile LaTeX document
+      uses: xu-cheng/latex-action@v3
+      with:
+        root_file: resume.tex
+
+    - name: Commit and push PDF
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@://github.com"
+        
+        # Check if the PDF was generated and if it has changes
+        if [ -f resume.pdf ]; then
+          git add resume.pdf
+          
+          # Only commit if there are changes to avoid workflow errors
+          if ! git diff --cached --quiet; then
+            git commit -m "Automated build: Update resume.pdf [skip ci]"
+            git push
+          else
+            echo "No changes detected in resume.pdf"
+          fi
+        else
+          echo "Error: resume.pdf was not generated."
+          exit 1
+        fi
